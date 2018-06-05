@@ -4,8 +4,7 @@ import numpy as np
 import pandas as pd
 
 from utils.cfg import data_root
-
-
+from utils.data_os import save_serise_data
 
 def dir_to_df(dir_path = "", visual_index = []):
     i = 0
@@ -58,6 +57,7 @@ def face_file_to_df(face_file_path = "", file_index = []):
                         j += 1
             df[i] = line_dic
             i += 1
+        df = pd.DataFrame.from_dict(df, orient='index')
         return df
 
 def save_photo_feature_df(data_paths="", indics=[], interaction_df={}, save_path=""):
@@ -76,10 +76,9 @@ def save_photo_feature_df(data_paths="", indics=[], interaction_df={}, save_path
             face_df = face_file_to_df(str(data_paths[i]), indics[i])
             face_df = face_df[face_df["photo_id"].isin(interaction_df["photo_id"].unique())]
             face_df = face_df.reset_index(drop=True)
-            df = pd.merge(pd, face_df, on = "photo_id")
+            df = pd.merge(df, face_df, on = "photo_id")
 
-    with open(save_path, 'wb') as file:
-        pickle.dump(df, file, pickle.HIGHEST_PROTOCOL)
+    save_serise_data(df, save_path)
 
 
 # save train data
@@ -103,7 +102,7 @@ train_interaction_file = train_root + "train_interaction.txt"
 train_interaction_df = file_to_df(train_interaction_file, interaction_index)
 train_interaction_df_file = train_root + "train_interaction.pkl"
 with open(train_interaction_df_file, 'wb') as file:
-    pickle.dump(train_interaction_df_file, file, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(train_interaction_df, file, pickle.HIGHEST_PROTOCOL)
 
 train_save_path = train_root + "photos_feature.pkl"
 save_photo_feature_df(data_paths = train_photos_feature_paths,
@@ -117,9 +116,9 @@ test_root = data_root + "test/"
 
 test_interaction_index = ["user_id", "photo_id", "time", "duration_time"]
 
-visual_dir = test_root + "preliminary_visual_train/"
-text_file_path = test_root + "train_text.txt"
-face_file_path = test_root + "train_face.txt"
+visual_dir = test_root + "preliminary_visual_test/"
+text_file_path = test_root + "test_text.txt"
+face_file_path = test_root + "test_face.txt"
 test_photos_feature_paths = [visual_dir, text_file_path, face_file_path]
 
 # save test interaction data to test_interaction.pkl
@@ -127,7 +126,7 @@ test_interaction_file = test_root + "test_interaction.txt"
 test_interaction_df = file_to_df(test_interaction_file, test_interaction_index)
 test_interaction_df_file = test_root + "test_interaction.pkl"
 with open(test_interaction_df_file, 'wb') as file:
-    pickle.dump(test_interaction_df_file, file, pickle.HIGHEST_PROTOCOL)
+    pickle.dump(test_interaction_df, file, pickle.HIGHEST_PROTOCOL)
 
 test_save_path = test_root + "photos_feature.pkl"
 save_photo_feature_df(data_paths = test_photos_feature_paths,
