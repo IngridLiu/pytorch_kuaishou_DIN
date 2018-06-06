@@ -3,14 +3,13 @@ import pickle
 import pandas as pd
 
 from utils.cfg import data_root
-from utils.data_os import load_series_data, save_serise_data
+from utils.data_os import pickle_load, pickle_dump
 
 # load the data of load_index
 def load_df_data(pkl_path, load_index):
-    with open(pkl_path, 'rb') as file:
-        df = load_series_data(file)
-        df = df[load_index]
-        return df
+    df = pickle_load(pkl_path)
+    df = df[load_index]
+    return df
 
 # build the map of key and number
 def build_map(df, col_name):
@@ -28,10 +27,8 @@ def remap_interaction_data(df, remap_indics, user_id_map, photo_id_map):
     df = exchange_map(df, remap_indics[0], user_id_map)
     df = exchange_map(df, remap_indics[1], photo_id_map)
     # resort interaction data
-    df["user_id"] = df["user_id"].map(lambda x: user_id_map[x])
     df = df.sort_values(['user_id', "time"])
     df = df.reset_index(drop=True)
-
     return df
 
 
@@ -74,14 +71,15 @@ train_photo_feature_df = load_df_data(train_photo_feature_pkl, photo_feature_ind
 # remap train feature df data
 train_photo_feature_df = exchange_map(train_photo_feature_df, remap_indics[1], photo_id_map)
 # sort photo feature data
-train_photo_feature_df = train_photo_feature_df.sort_values('user_id')
+train_photo_feature_df = train_photo_feature_df.sort_values('photo_id')
 train_photo_feature_df = train_photo_feature_df.reset_index(drop=True)
+
 # remap train interaction data
 train_interaction_df = remap_interaction_data(train_interaction_df, remap_indics, user_id_map, photo_id_map)
 # save train data
 train_remap_save_path = train_root + "remap.pkl"
 train_data = [train_interaction_df, train_photo_feature_df, (user_count, photo_count, interaction_count), (user_id_key, photo_id_key)]
-save_serise_data(train_data, train_remap_save_path)
+pickle_dump(train_data, train_remap_save_path)
 
 
 
@@ -90,7 +88,7 @@ test_photo_feature_pkl = test_root + "photos_feature.pkl"
 test_photo_feature_df = load_df_data(test_photo_feature_pkl, photo_feature_index)
 test_photo_feature_df = exchange_map(test_photo_feature_df, remap_indics[1], photo_id_map)
 # resort test photo feature df
-test_photo_feature_df = test_photo_feature_df.sort_values('user_id')
+test_photo_feature_df = test_photo_feature_df.sort_values('photo_id')
 test_photo_feature_df = test_photo_feature_df.reset_index(drop=True)
 
 # remap test interaction data
@@ -99,7 +97,7 @@ test_interaction_df = remap_interaction_data(test_interaction_df, remap_indics, 
 # save train data
 test_remap_save_path = test_root + "remap.pkl"
 test_data = [test_interaction_df, test_photo_feature_df]
-save_serise_data(test_data, test_remap_save_path)
+pickle_dump(test_data, test_remap_save_path)
 
 
 

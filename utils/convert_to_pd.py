@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from utils.cfg import data_root
-from utils.data_os import save_serise_data
+from utils.data_os import pickle_dump
 
 def dir_to_df(dir_path = "", visual_index = []):
     i = 0
@@ -78,7 +78,7 @@ def save_photo_feature_df(data_paths="", indics=[], interaction_df={}, save_path
             face_df = face_df.reset_index(drop=True)
             df = pd.merge(df, face_df, on = "photo_id")
 
-    save_serise_data(df, save_path)
+    pickle_dump(df, save_path)
 
 
 # save train data
