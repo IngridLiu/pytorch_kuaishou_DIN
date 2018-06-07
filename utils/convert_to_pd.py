@@ -33,11 +33,11 @@ def save_photo_feature_df(data_paths="", indics=[], interaction_df={}, save_path
 #
 # train_root = data_root + "train/"
 #
-# interaction_index = ["user_id", "photo_id", "click", "like", "follow", "time", "playing_time", "duration_time"]
-# visual_index = ["photo_id", "visual_feature"]
-# text_index = ["photo_id", "cover_words"]
-# face_index = ["photo_id", "face_ratio", "gender", "age", "face_score"]
-# photo_feature_indics = [visual_index, text_index, face_index]
+interaction_index = ["user_id", "photo_id", "click", "like", "follow", "time", "playing_time", "duration_time"]
+visual_index = ["photo_id", "visual_feature"]
+text_index = ["photo_id", "cover_words"]
+face_index = ["photo_id", "face_ratio", "gender", "age", "face_score"]
+photo_feature_indics = [visual_index, text_index, face_index]
 #
 # # file path
 # visual_dir = train_root + "preliminary_visual_train/"
