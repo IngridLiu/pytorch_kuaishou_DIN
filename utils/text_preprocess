@@ -1,0 +1,77 @@
+# -*- encoding: utf-8 -*-
+from __future__ import print_function, unicode_literals
+import json
+import requests
+import pandas as pd
+from jieba.analyse import *
+
+from utils.data_os import file_to_df
+from utils.cfg import data_root
+
+
+def get_keywords_boston(text):
+
+    keywords = []
+
+    KEYWORDS_URL = 'http://api.bosonnlp.com/keywords/analysis'
+
+    params = {'top_k': 5}
+    data = json.dumps(text)
+    headers = {'X-Token': 'avla9gw6.26144.wxPS6x31WINK'}
+    resp = requests.post(KEYWORDS_URL, headers=headers, params=params, data=data.encode('utf-8'))
+    for weight, word in resp.json():
+        keywords.append(word)
+    return keywords
+
+def get_keywords_jieba(text):
+    keywords = []
+    for word in extract_tags(text, 5, withWeight = False):
+        keywords.append(word)
+    return keywords
+
+
+def get_keywords_of_df(text_df, text_index):
+    text_keywords_list =[]
+    for index,row in text_df.iterrows():
+        key = []
+        photo_id = row[text_index[0]]
+        coverwords = row[text_index[1]]
+        keywords = get_keywords_jieba(coverwords)
+        key.append(photo_id)
+        key.append(keywords)
+        text_keywords_list.append(key)
+    return text_keywords_list
+
+def save_keywords(save_path ,keywords_list):
+    with open(save_path, 'w') as file:
+        for keywords in keywords_list:
+            file.write(str(keywords[0]))
+            file.write("\t")
+            file.write(str(keywords[1]))
+            file.write("\n")
+
+text_index = ["photo_id", "cover_words"]
+
+# preprocess train text data
+train_root = data_root + "train/"
+
+train_text_path = train_root + "train_text.txt"
+train_text_df  = file_to_df(train_text_path, text_index)
+train_keywords_list = get_keywords_of_df(train_text_df, text_index)
+
+train_keywords_path = train_root + "train_keywords.txt"
+save_keywords(train_keywords_path, train_keywords_list)
+
+# preprocess test text data
+test_root = data_root + "test/"
+
+test_text_path = test_root + "test_text.txt"
+test_text_df = file_to_df(test_text_path, text_index)
+test_keywords_list = get_keywords_of_df(test_text_df, text_index)
+
+test_keywords_path = test_root + "test_keywords.txt"
+save_keywords(test_keywords_path, test_keywords_list)
+
+
+
+

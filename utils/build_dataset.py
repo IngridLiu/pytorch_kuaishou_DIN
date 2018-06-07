@@ -18,8 +18,8 @@ train_root = data_root + "train/"
 test_root  = data_root + "test/"
 
 # the path saved remap  data
-train_remap_path = train_root + "remap.pkl"
-test_remap_path = test_root + "remap.pkl"
+train_remap_path = train_root + "train_remap.pkl"
+test_remap_path = test_root + "test_remap.pkl"
 
 # load train pkl data
 train_data = pickle_load(train_remap_path)
@@ -84,11 +84,11 @@ random.shuffle(test_set)
 
 
 # save train and val set
-train_save_path = train_root + "dataset.pkl"
+train_save_path = train_root + "train_dataset.pkl"
 train_data_set = [train_set, val_set, train_photo_feature_df, (user_count, photo_count)]
 pickle_dump(train_data_set, train_save_path)
 
 # save test set
-test_save_path = test_root + "dataset.pkl"
+test_save_path = test_root + "test_dataset.pkl"
 test_data_set = [test_set, test_photo_feature_df]
 pickle_dump(test_data_set, test_save_path)

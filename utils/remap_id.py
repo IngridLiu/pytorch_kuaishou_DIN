@@ -66,7 +66,7 @@ photo_feature_index =["photo_id", "visual_feature","cover_words",
                       "face_ratio", "gender", "age", "face_score"]
 
 #load train photo_feature data
-train_photo_feature_pkl = train_root + "photos_feature.pkl"
+train_photo_feature_pkl = train_root + "train_photos_feature.pkl"
 train_photo_feature_df = load_df_data(train_photo_feature_pkl, photo_feature_index)
 # remap train feature df data
 train_photo_feature_df = exchange_map(train_photo_feature_df, remap_indics[1], photo_id_map)
@@ -77,14 +77,14 @@ train_photo_feature_df = train_photo_feature_df.reset_index(drop=True)
 # remap train interaction data
 train_interaction_df = remap_interaction_data(train_interaction_df, remap_indics, user_id_map, photo_id_map)
 # save train data
-train_remap_save_path = train_root + "remap.pkl"
+train_remap_save_path = train_root + "train_remap.pkl"
 train_data = [train_interaction_df, train_photo_feature_df, (user_count, photo_count, interaction_count), (user_id_key, photo_id_key)]
 pickle_dump(train_data, train_remap_save_path)
 
 
 
 #load test photo_feature data
-test_photo_feature_pkl = test_root + "photos_feature.pkl"
+test_photo_feature_pkl = test_root + "test_photos_feature.pkl"
 test_photo_feature_df = load_df_data(test_photo_feature_pkl, photo_feature_index)
 test_photo_feature_df = exchange_map(test_photo_feature_df, remap_indics[1], photo_id_map)
 # resort test photo feature df
@@ -95,7 +95,7 @@ test_photo_feature_df = test_photo_feature_df.reset_index(drop=True)
 test_interaction_df = remap_interaction_data(test_interaction_df, remap_indics, user_id_map, photo_id_map)
 
 # save train data
-test_remap_save_path = test_root + "remap.pkl"
+test_remap_save_path = test_root + "test_remap.pkl"
 test_data = [test_interaction_df, test_photo_feature_df]
 pickle_dump(test_data, test_remap_save_path)
 
